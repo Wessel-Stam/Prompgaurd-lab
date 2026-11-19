@@ -1,0 +1,32 @@
+[project]
+name = "promptguard-lab"
+version = "0.1.0"
+description = "Local-only educational prompt-injection lab"
+requires-python = ">=3.11"
+dependencies = [
+  "ollama==0.6.1",
+  "streamlit==1.67.0",
+  "pandas==2.3.3",
+  "pillow==13.0.0",
+  "pyarrow==26.0.1",
+  "setuptools==84.2.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==9.0.3",
+  "ruff==0.14.6",
+  "bandit==1.9.2",
+  "pip-audit==2.10.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+markers = ["integration: requires explicit opt-in and a local Ollama server"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"

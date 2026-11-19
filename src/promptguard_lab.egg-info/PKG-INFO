@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: promptguard-lab
+Version: 0.1.0
+Summary: Local-only educational prompt-injection lab
+Requires-Python: >=3.11
+License-File: LICENSE
+Requires-Dist: ollama==0.6.1
+Requires-Dist: streamlit==1.67.0
+Requires-Dist: pandas==2.3.3
+Requires-Dist: pillow==13.0.0
+Requires-Dist: pyarrow==26.0.1
+Requires-Dist: setuptools==84.2.1
+Provides-Extra: dev
+Requires-Dist: pytest==9.0.3; extra == "dev"
+Requires-Dist: ruff==0.14.6; extra == "dev"
+Requires-Dist: bandit==1.9.2; extra == "dev"
+Requires-Dist: pip-audit==2.10.1; extra == "dev"
+Dynamic: license-file

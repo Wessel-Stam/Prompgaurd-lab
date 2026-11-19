@@ -1,16 +1,17 @@
 # PromptGuard Lab
 
-> **Status:** starter implementation, not security-hardened. The complete target design (four defense modes, 25 security requirements, automated tests and CI) is specified in [`IMPLEMENTATIEPLAN_COPILOT.md`](IMPLEMENTATIEPLAN_COPILOT.md). The included starter does **not** implement those requirements yet.
+> **Status:** implementation in progress. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) and the authoritative [`IMPLEMENTATIEPLAN_COPILOT.md`](IMPLEMENTATIEPLAN_COPILOT.md).
 
 A small, original educational cybersecurity project for testing **indirect prompt injection** against a local AI document summarizer. Never use real secrets or third-party systems in tests.
 
 ## Goal
 
-Compare three conditions:
+Compare four conditions:
 
 1. `baseline`: normal summarizer with injected document content.
 2. `isolated`: stricter system message and unique untrusted-document boundary.
 3. `isolated+filter`: the same as isolated, plus an intentionally simplistic phrase filter.
+4. `quarantined`: extraction JSON is validated before a fact-only summary pass.
 
 **Important:** None of these defenses guarantees security. The pattern filter is especially easy to bypass and can mistakenly block harmless documents. This is a lab, not a production security control.
 
