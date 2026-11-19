@@ -9,16 +9,28 @@ from .schemas import ModelResult
 
 
 class ChatClient(Protocol):
-    def chat(self, *, model: str, messages: list[dict[str, str]], options: dict[str, object], timeout: int) -> object: ...
+    def chat(self, *, model: str, messages: list[dict[str, str]], options: dict[str, object]) -> object: ...
 
 
 class OllamaError(RuntimeError):
     pass
 
 
-def verify_localhost() -> None:
-    if OLLAMA_BASE_URL != "http://127.0.0.1:11434":
+def verify_localhost(host: str = OLLAMA_BASE_URL) -> None:
+    if host != "http://127.0.0.1:11434":
         raise RuntimeError("non_localhost_endpoint")
+
+
+def create_client(timeout: int = MODEL_TIMEOUT_SECONDS) -> ChatClient:
+    """Create the only network client used by the app.
+
+    Passing the host explicitly prevents Ollama's ``OLLAMA_HOST`` environment
+    fallback from redirecting requests to a remote service.
+    """
+    verify_localhost()
+    import ollama
+
+    return ollama.Client(host=OLLAMA_BASE_URL, timeout=timeout)
 
 
 def chat_once(
@@ -27,7 +39,6 @@ def chat_once(
     client: ChatClient,
     timeout: int = MODEL_TIMEOUT_SECONDS,
 ) -> ModelResult:
-    verify_localhost()
     if model not in ALLOWED_MODELS:
         return ModelResult("model_error", "", "unknown_model", "The selected model is not allowed.", model_invoked=False)
     started = time.monotonic()
@@ -36,7 +47,6 @@ def chat_once(
             model=model,
             messages=messages,
             options={"temperature": 0, "num_predict": MAX_OUTPUT_TOKENS, "num_ctx": 4096},
-            timeout=timeout,
         )
         message = getattr(result, "message", None)
         content = getattr(message, "content", None)

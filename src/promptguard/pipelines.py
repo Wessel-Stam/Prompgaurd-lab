@@ -7,14 +7,14 @@ from typing import Protocol
 from .config import DEFAULT_MODEL
 from .injection_detector import scan_injection
 from .isolation import build_isolated_messages
-from .ollama_client import chat_once
+from .ollama_client import create_client, chat_once
 from .output_validator import validate_output
 from .schemas import Mode, ModelResult
 from .validation import validate_document
 
 
 class ChatClient(Protocol):
-    def chat(self, *, model: str, messages: list[dict[str, str]], options: dict[str, object], timeout: int) -> object: ...
+    def chat(self, *, model: str, messages: list[dict[str, str]], options: dict[str, object]) -> object: ...
 
 
 def run_document(
@@ -32,8 +32,7 @@ def run_document(
         if scan.severity == "high":
             return ModelResult("blocked_by_policy", "", "blocked_by_detector", "; ".join(scan.reasons), model_invoked=False)
     if client is None:
-        import ollama
-        client = ollama
+        client = create_client()
     if mode == "baseline":
         messages = [
             {"role": "system", "content": "Summarize the document in at most three short bullet points."},

@@ -20,7 +20,7 @@ class MockChat:
         self.responses = iter(responses)
         self.calls = []
 
-    def chat(self, *, model, messages, options, timeout):
+    def chat(self, *, model, messages, options):
         self.calls.append(messages)
         response = next(self.responses)
         return SimpleNamespace(message=SimpleNamespace(content=response))
@@ -148,6 +148,29 @@ def test_unknown_model_rejected():
     result = chat_once([], "unknown:model", mock)
     assert result.reason_code == "unknown_model"
     assert not result.model_invoked
+
+
+def test_sdk_compatible_mock_does_not_accept_timeout_kwarg():
+    mock = MockChat(["- fact"])
+    result = chat_once([], "gemma3:1b", mock)
+    assert result.status == "completed"
+    assert mock.calls == [[]]
+
+
+def test_client_factory_uses_fixed_loopback_host(monkeypatch):
+    import ollama
+    from promptguard.ollama_client import create_client
+
+    captured = {}
+
+    class FakeClient:
+        def __init__(self, *, host, timeout):
+            captured.update(host=host, timeout=timeout)
+
+    monkeypatch.setenv("OLLAMA_HOST", "http://attacker.example.invalid:9999")
+    monkeypatch.setattr(ollama, "Client", FakeClient)
+    create_client(timeout=17)
+    assert captured == {"host": "http://127.0.0.1:11434", "timeout": 17}
 
 
 def test_malformed_model_response_is_error():

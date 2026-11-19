@@ -46,10 +46,18 @@ The authoritative specification is `IMPLEMENTATIEPLAN_COPILOT.md`.
 - [x] SEC-25 — implemented and covered by unit tests or explicit documented limitation
 
 ## Verification
-- [x] Unit tests executed successfully: 45 passed, 1 integration test skipped.
-- [x] Lint and static security checks pass: Ruff passed; Bandit passed. Dependency audit requires follow-up review of resolved transitive findings.
+- [x] Unit tests executed successfully: `python -m pytest -q` — 47 passed, 1 integration test skipped (Python 3.12; Python 3.11 is CI-only in this environment).
+- [x] Lint and static security checks pass: `python -m ruff check .` passed; `python -m bandit -r src app.py detector.py evaluate.py` passed.
+- [x] Dependency audit: after upgrading pip, `python -m pip_audit` reported no known vulnerabilities; the local audit also notes the project is not published to PyPI.
 - [ ] Local Ollama integration run completed (NOT VERIFIED).
 - [ ] False-positive and attack-success experiments measured (NOT VERIFIED: requires local model).
 - [ ] Human review completed (NOT VERIFIED).
+
+## Review follow-up
+
+- Ollama 0.6.1 requests now use `ollama.Client(host="http://127.0.0.1:11434", timeout=60)` and call the SDK-compatible `chat()` signature without a per-call timeout.
+- `OLLAMA_HOST` is tested as unable to redirect the explicit client host.
+- CI upgrades pip before audit and pins patched Streamlit, Pillow, PyArrow, and setuptools versions.
+- The previous CI run `44459664695` failed dependency auditing; its pull-request run `44459669759` was `action_required` before these fixes. A new run is required after this push.
 
 **Rule:** Only check off an item once it exists, passes applicable tests and the exact results are recorded. Do not invent measurements.

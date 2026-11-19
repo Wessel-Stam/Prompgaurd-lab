@@ -5,8 +5,11 @@ Summary: Local-only educational prompt-injection lab
 Requires-Python: >=3.11
 License-File: LICENSE
 Requires-Dist: ollama==0.6.1
-Requires-Dist: streamlit==1.54.0
+Requires-Dist: streamlit==1.67.0
 Requires-Dist: pandas==2.3.3
+Requires-Dist: pillow==13.0.0
+Requires-Dist: pyarrow==26.0.1
+Requires-Dist: setuptools==84.2.1
 Provides-Extra: dev
 Requires-Dist: pytest==9.0.3; extra == "dev"
 Requires-Dist: ruff==0.14.6; extra == "dev"
